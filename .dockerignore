@@ -1,10 +1,9 @@
 .git
+.venv
+node_modules
+__pycache__
+*.pyc
+.env
 media
 static_root
-node_modules
-npm-debug.log
-**/.env
-venv
-.venv
-.direnv
-.pytest_cache
+db.sqlite3

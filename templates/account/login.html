@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load form_tags %}
+{% load socialaccount %}
 {% block body %}
   <div class="flex justify-center my-8 ">
     <div class="w-96 px-4 py-4">
@@ -24,6 +25,17 @@
             {% translate "Mail me a sign-in code" %}
           </a>
         </p>
+        {% endif %}
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+          <div class="divider">{% translate "or" %}</div>
+          <div class="flex flex-col gap-2">
+            {% for provider in socialaccount_providers %}
+              <a class="btn btn-outline btn-block" href="{% provider_login_url provider.id %}">
+                {% translate "Sign in with" %} {{ provider.name }}
+              </a>
+            {% endfor %}
+          </div>
         {% endif %}
       </div>
     </div>

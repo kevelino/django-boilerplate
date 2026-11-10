@@ -1,0 +1,17 @@
+{% extends 'web/base.html' %}
+{% block body %}
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">AI Conversations</h1>
+  <form method="post" action="{% url 'conversation_create' %}" class="mb-4">
+    {% csrf_token %}
+    <button class="btn btn-primary" type="submit">New Conversation</button>
+  </form>
+  <ul class="space-y-2">
+    {% for c in conversations %}
+      <li><a href="{% url 'conversation_detail' c.pk %}" class="link">{{ c.title }}</a> <span class="badge">{{ c.provider }}</span></li>
+    {% empty %}
+      <li>No conversations yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

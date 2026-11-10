@@ -1,0 +1,17 @@
+{% extends 'web/base.html' %}
+{% block body %}
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">Your Teams</h1>
+  <a href="{% url 'team_create' %}" class="btn btn-primary mb-4">Create Team</a>
+  <ul class="space-y-2">
+    {% for m in memberships %}
+      <li class="card bg-base-200 p-4">
+        <a href="{% url 'team_detail' m.team.slug %}" class="font-semibold">{{ m.team.name }}</a>
+        <span class="badge ml-2">{{ m.role }}</span>
+      </li>
+    {% empty %}
+      <p>You are not a member of any team yet.</p>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

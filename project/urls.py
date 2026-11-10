@@ -35,8 +35,15 @@ urlpatterns = [
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
     path("accounts/", include("allauth.urls")),
     path("users/", include("apps.users.urls")),
+    path("teams/", include("apps.teams.urls")),
+    path("billing/", include("apps.billing.urls")),
+    path("ai/", include("apps.ai.urls")),
+    path("stripe/", include("djstripe.urls", namespace="djstripe")),
+    path("api/", include("apps.api_keys.urls")),
+    path("health/", include("health_check.urls")),
     path("", include("apps.web.urls")),
     path("celery-progress/", include("celery_progress.urls")),
+    path("impersonate/", include("impersonate.urls")),
     # API docs.
     # These endpoints are public by default. To restrict access, pass `permission_classes`
     # to the views below (e.g. `[permissions.IsAdminUser]`), gate on `settings.DEBUG`,

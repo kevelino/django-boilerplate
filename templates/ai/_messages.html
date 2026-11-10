@@ -1,0 +1,5 @@
+{% for m in messages %}
+  <div class="chat {% if m.role == 'user' %}chat-end{% else %}chat-start{% endif %}">
+    <div class="chat-bubble">{{ m.content }}</div>
+  </div>
+{% endfor %}

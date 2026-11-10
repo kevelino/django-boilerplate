@@ -53,9 +53,20 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "allauth",  # allauth account/registration management
     "allauth.account",
+    "allauth.mfa",  # multi-factor authentication (TOTP, recovery codes)
     "allauth.socialaccount",
+    # Social providers (enable via SOCIALACCOUNT_PROVIDERS + env vars)
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
+    "allauth.socialaccount.providers.twitter",
+    "health_check",
+    "health_check.db",
+    "health_check.cache",
+    "health_check.storage",
     "django_htmx",
     "django_vite",
+    "djstripe",
+    "impersonate",
     "rest_framework",
     "drf_spectacular",
     "celery_progress",
@@ -67,17 +78,24 @@ THIRD_PARTY_APPS = [
 PROJECT_APPS = [
     "apps.users.apps.UserConfig",
     "apps.web",
+    "apps.api_keys.apps.ApiKeysConfig",
+    "apps.teams.apps.TeamsConfig",
+    "apps.billing.apps.BillingConfig",
+    "apps.ai.apps.AiConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "impersonate.middleware.ImpersonateMiddleware",
+    "apps.teams.middleware.CurrentTeamMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -211,6 +229,72 @@ AUTHENTICATION_BACKENDS = (
 TURNSTILE_KEY = env("TURNSTILE_KEY", default=None)
 TURNSTILE_SECRET = env("TURNSTILE_SECRET", default=None)
 
+# ---------------------------------------------------------------------------
+# Pro features
+# ---------------------------------------------------------------------------
+
+# Multi-factor authentication (allauth.mfa)
+MFA_TOTP_ISSUER = env("MFA_TOTP_ISSUER", default="Django Boilerplate")
+
+# Social account providers (django-allauth)
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "APP": {
+            "client_id": env("GOOGLE_CLIENT_ID", default=""),
+            "secret": env("GOOGLE_CLIENT_SECRET", default=""),
+        },
+    },
+    "github": {
+        "SCOPE": ["user:email"],
+        "APP": {
+            "client_id": env("GITHUB_CLIENT_ID", default=""),
+            "secret": env("GITHUB_CLIENT_SECRET", default=""),
+        },
+    },
+    "twitter": {
+        "SCOPE": ["users.read", "tweet.read", "offline.access"],
+        "APP": {
+            "client_id": env("TWITTER_CLIENT_ID", default=""),
+            "secret": env("TWITTER_CLIENT_SECRET", default=""),
+        },
+    },
+}
+# Auto-connect social accounts to existing users with the same email
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+
+# djstripe / Stripe billing
+STRIPE_LIVE_MODE = env.bool("STRIPE_LIVE_MODE", default=False)
+STRIPE_LIVE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
+STRIPE_TEST_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
+STRIPE_LIVE_PUBLISHABLE_KEY = env("STRIPE_PUBLIC_KEY", default="")
+STRIPE_TEST_PUBLISHABLE_KEY = env("STRIPE_PUBLIC_KEY", default="")
+DJSTRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
+DJSTRIPE_USE_NATIVE_JSONFIELD = True
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
+
+# AI providers
+OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
+ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY", default="")
+AI_DEFAULT_PROVIDER = env("AI_DEFAULT_PROVIDER", default="openai")
+AI_DEFAULT_MODEL = env("AI_DEFAULT_MODEL", default="gpt-4o-mini")
+
+# Impersonation (django-impersonate)
+IMPERSONATE = {
+    "REQUIRE_SUPERUSER": env.bool("IMPERSONATE_REQUIRE_SUPERUSER", default=True),
+    "REDIRECT_URL": "/",
+    "PAGINATE_COUNT": 20,
+}
+
+# Sentry (optional)
+SENTRY_DSN = env("SENTRY_DSN", default="")
+if SENTRY_DSN:
+    import sentry_sdk
+
+    sentry_sdk.init(dsn=SENTRY_DSN, traces_sample_rate=0.1)
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
@@ -239,10 +323,10 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        # swap these to use manifest storage to bust cache when files change
-        # note: this may break image references in sass/css files which is why it is not enabled by default
-        # "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        # WhiteNoise serves static files in production
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        if not DEBUG
+        else "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
@@ -301,6 +385,7 @@ SITE_ID = 1
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
+        "apps.api_keys.authentication.ApiKeyAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

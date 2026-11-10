@@ -1,0 +1,11 @@
+{% extends 'web/base.html' %}
+{% block body %}
+<div class="container mx-auto p-6 max-w-md">
+  <h1 class="text-2xl font-bold mb-4">Create a Team</h1>
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Team name" class="input input-bordered w-full" required>
+    <button class="btn btn-primary w-full" type="submit">Create</button>
+  </form>
+</div>
+{% endblock %}

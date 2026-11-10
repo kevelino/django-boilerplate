@@ -1,0 +1,21 @@
+{
+  "name": "Django Boilerplate Pro",
+  "description": "Production-ready Django SaaS boilerplate with subscriptions, teams, AI chat.",
+  "repository": "https://github.com/saaspegasus/django-boilerplate",
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/2/20/PEO-pegasus_black.svg",
+  "keywords": ["django", "saas", "python"],
+  "env": {
+    "SECRET_KEY": { "generator": "secret" },
+    "DEBUG": "False",
+    "ALLOWED_HOSTS": "*",
+    "STRIPE_SECRET_KEY": { "required": true },
+    "STRIPE_PUBLIC_KEY": { "required": true },
+    "STRIPE_WEBHOOK_SECRET": { "required": true },
+    "OPENAI_API_KEY": { "required": false }
+  },
+  "addons": [
+    { "plan": "heroku-postgresql" },
+    { "plan": "heroku-redis" }
+  ],
+  "buildpacks": [{ "url": "heroku/python" }]
+}

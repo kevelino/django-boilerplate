@@ -10,6 +10,35 @@
 </li>
 {% if not user.is_anonymous %}
 <li class="menu-title">
+  <span>{% translate "Workspace" %}</span>
+</li>
+<ul class="menu-list">
+  <li>
+    <a href="{% url 'team_list' %}">
+      <i class="fa fa-users h-4 w-4"></i>
+      {% translate "Teams" %}
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'billing_status' %}">
+      <i class="fa fa-credit-card h-4 w-4"></i>
+      {% translate "Billing" %}
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'conversation_list' %}">
+      <i class="fa fa-comments h-4 w-4"></i>
+      {% translate "AI Chat" %}
+    </a>
+  </li>
+  <li>
+    <a href="/api/api-keys/">
+      <i class="fa fa-key h-4 w-4"></i>
+      {% translate "API Keys" %}
+    </a>
+  </li>
+</ul>
+<li class="menu-title">
   <span>{% translate "My Account" %}</span>
 </li>
 <ul class="menu-list">

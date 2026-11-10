@@ -66,17 +66,25 @@ dependencies = [
     "celery",
     "celery-progress",
     "celery[redis]",
-    "django-allauth[socialaccount]>=65.13.0",
+    "django-allauth[socialaccount,mfa]>=65.13.0",
     "django-anymail[mailgun]", # email services
     "django-celery-beat",
     "django-environ",
+    "django-health-check",
     "django-htmx",
+    "django-impersonate",
     "django-vite>=3.1.0",
     "django-waffle",
     "djangorestframework",
     "drf-spectacular",
+    "djstripe",
+    "anthropic",
+    "openai",
     "psycopg",
+    "qrcode[pil]",
     "redis",
+    "sentry-sdk",
+    "whitenoise",
 ]
 
 [dependency-groups]

@@ -1,0 +1,14 @@
+{% extends 'web/base.html' %}
+{% block body %}
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">Subscription Status</h1>
+  {% if subscription %}
+    <p>Active plan: {{ subscription.plan.nickname|default:subscription.plan.id }}</p>
+    <p>Status: {{ subscription.status }}</p>
+    <a href="{% url 'billing_portal' %}" class="btn btn-secondary">Manage Billing</a>
+  {% else %}
+    <p>No active subscription.</p>
+    <a href="{% url 'pricing' %}" class="btn btn-primary">View Plans</a>
+  {% endif %}
+</div>
+{% endblock %}

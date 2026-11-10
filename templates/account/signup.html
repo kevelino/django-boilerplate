@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load form_tags %}
+{% load socialaccount %}
 {% block page_head %}
 {% if turnstile_key %}
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -32,6 +33,17 @@
           {% endif %}
           <input class="btn btn-primary btn-block" type="submit" value="{% translate "Sign Up" %}">
         </form>
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+          <div class="divider">{% translate "or" %}</div>
+          <div class="flex flex-col gap-2 mb-4">
+            {% for provider in socialaccount_providers %}
+              <a class="btn btn-outline btn-block" href="{% provider_login_url provider.id process='signup' %}">
+                {% translate "Sign up with" %} {{ provider.name }}
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
         <div class="text-sm mt-4">
           {% translate "Already have account?" %}
           <a href="{% url 'account_login' %}" class="font-medium pg-link">

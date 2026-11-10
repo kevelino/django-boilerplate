@@ -1,0 +1,47 @@
+{% extends 'web/base.html' %}
+{% block body %}
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-2">{{ team.name }}</h1>
+  <p class="text-sm opacity-70 mb-4">{{ team.description }}</p>
+  <form method="post" action="{% url 'team_switch' team.slug %}" class="mb-4">
+    {% csrf_token %}
+    <button class="btn btn-sm" type="submit">Switch to this team</button>
+  </form>
+
+  <h2 class="text-xl font-semibold mb-2">Members</h2>
+  <ul class="space-y-2 mb-6">
+    {% for m in members %}
+      <li class="flex items-center gap-2">
+        <span>{{ m.user.get_display_name }}</span>
+        <span class="badge">{{ m.role }}</span>
+        {% if membership.is_admin and m.user != request.user %}
+          <form method="post" action="{% url 'member_remove' team.slug m.user.id %}" class="inline">
+            {% csrf_token %}
+            <button class="btn btn-xs btn-error" type="submit">Remove</button>
+          </form>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2 class="text-xl font-semibold mb-2">Invite Member</h2>
+  <form method="post" action="{% url 'team_invite' team.slug %}" class="flex gap-2 mb-6">
+    {% csrf_token %}
+    <input type="email" name="email" placeholder="email@example.com" class="input input-bordered" required>
+    <select name="role" class="select select-bordered">
+      <option value="member">Member</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button class="btn btn-primary" type="submit">Invite</button>
+  </form>
+
+  <h2 class="text-xl font-semibold mb-2">Pending Invitations</h2>
+  <ul class="space-y-1">
+    {% for inv in invitations %}
+      <li>{{ inv.email }} — {{ inv.role }} (expires {{ inv.expires_at }})</li>
+    {% empty %}
+      <li>No pending invitations.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'web/base.html' %}
+{% block body %}
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">Pricing</h1>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {% for product in products %}
+      <div class="card bg-base-200 p-6">
+        <h2 class="text-xl font-semibold">{{ product.name }}</h2>
+        <p class="opacity-70 mb-4">{{ product.description }}</p>
+        {% for price in product.prices.all %}
+          <form method="post" action="{% url 'create_checkout_session' %}">
+            {% csrf_token %}
+            <input type="hidden" name="price_id" value="{{ price.id }}">
+            <button class="btn btn-primary w-full" type="submit">
+              Subscribe — {{ price.human_readable_price }}
+            </button>
+          </form>
+        {% endfor %}
+      </div>
+    {% empty %}
+      <p>No products configured. Add them in the Stripe/Djstripe admin.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

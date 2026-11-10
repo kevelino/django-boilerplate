@@ -51,11 +51,11 @@ The pro version is more suitable for business-grade SaaS and AI applications.
 | REST API (DRF) | ✅ | ✅ |
 | Tailwind + DaisyUI + vite front end | ✅ | ✅ |
 | Docker & CI | ✅ | ✅ |
-| **Stripe subscriptions & billing** | — | ✅ |
-| **Teams & multi-tenancy** | — | ✅ |
-| **Built-in AI chat/agent app** | — | ✅ |
-| **One-click production deployment** (Render, Fly, Heroku, GCP, AWS…) | — | ✅ |
-| **Social & 2FA login, API keys, user impersonation** | — | ✅ |
+| **Stripe subscriptions & billing** | ✅ (self-hosted) | ✅ |
+| **Teams & multi-tenancy** | ✅ (self-hosted) | ✅ |
+| **Built-in AI chat/agent app** | ✅ (self-hosted) | ✅ |
+| **One-click production deployment** (Render, Fly, Heroku, GCP, AWS…) | ✅ (self-hosted) | ✅ |
+| **Social & 2FA login, API keys, user impersonation** | ✅ (self-hosted) | ✅ |
 | **Dedicated support & priority fixes** | Community | ✅ |
 
 **[Check out SaaS Pegasus Pro →](https://www.saaspegasus.com/)**
